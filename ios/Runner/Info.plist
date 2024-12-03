@@ -4,6 +4,8 @@
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We need access to your location to provide location services.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>We need your location to provide better services.</string>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
