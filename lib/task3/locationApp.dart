@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:task_2/task3/permission_handler.dart';
 
 class LocationApp extends StatefulWidget {
   @override
@@ -64,14 +65,21 @@ class _LocationAppState extends State<LocationApp> {
 
   Future<void> _getCurrentLocation() async {
     try {
-      Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
-      setState(() {
-        _coordinates =
-            'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
-      });
-      await _getAddressDetailsFromCoordinates(
-          position.latitude, position.longitude);
+      final hasPermission =
+          await LocationPermissionHandler.checkLocationPermission(context);
+
+      if (hasPermission) {
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        setState(() {
+          _coordinates =
+              'Latitude: ${position.latitude}, Longitude: ${position.longitude}';
+        });
+        await _getAddressDetailsFromCoordinates(
+            position.latitude, position.longitude);
+      }else{
+        await LocationPermissionHandler.openSettingsforPermissionDialog(context);
+      }
     } catch (e) {
       setState(() {
         _address = 'Error: $e';
@@ -145,7 +153,9 @@ class _LocationAppState extends State<LocationApp> {
                 ),
                 child: const Text('Get Location from Coordinates'),
               ),
-            const SizedBox(height: 15,),
+              const SizedBox(
+                height: 15,
+              ),
               ElevatedButton(
                 onPressed: _getCurrentLocation,
                 child: const Text('Get Current Location'),
